@@ -2,6 +2,7 @@
 
 > **Authorized RE Range — License System Bypass (SUPHX-138)**
 > 目标：`MahjongLittleSuphx-1.38.exe`（受商业壳保护、联网运营的第三方软件）
+> 目的：检验授权体系的抗攻击强度，为后续加固提供依据。
 
 > 📅 本版要求依据**首轮侦察报告**修订。上一版将本题设计为「逆出算法写 Keygen」，与目标实际实现不符，已废弃。修订要点见下文「重要前提」。
 
@@ -15,14 +16,20 @@
 
 ---
 
-## ⚠️ 授权范围
+## ⚠️ 授权范围与玩法
 
-- 本靶场面向**参加本轮授权测试的进攻方**开放，仅限在**隔离的本地虚拟机或专用测试机**内进行。
-- **允许**：静态分析、动态调试、内存转储、**脱壳**、打补丁、运行时注入；抓包**观察**本机校验流量、本地代理拦截、在 **hosts 重定向到本地**的前提下伪造校验响应。**客户端侧的流量分析与本地伪造，属于本题的正常解法范围。**
-- **禁止**：向任何线上服务器发送攻击流量 —— 包括但不限于扫描、探测、目录爆破、凭据爆破、参数 fuzzing、压测 / DoS、重放，以及对 Enigma Protector 厂商或程序作者的任何线上接口发起测试。**授权范围只覆盖本机运行的目标程序，不覆盖它连接的任何服务端。** 若校验逻辑需要服务端响应才能走通，请在本地自建应答，不要转向线上。
-- **禁止**：传播破解补丁、注册机或免授权成品；用于商业用途或二次分发；在公开渠道发布完整解法（writeup 请提交至 `writeups/` 由维护者审核后放出）。
-- 分析目标仅限本仓库提供的 `MahjongLittleSuphx-1.38.exe`，**不得**将技术手段迁移至未获授权的其他软件。
-- 本项目 "AS IS" 提供，仅供安全研究与教学内容使用。
+**本靶场鼓励进攻方放手去做，越接近完整攻破越好。** 
+
+- **环境**：隔离的本地虚拟机或专用测试机。建议断网，但**不强制** —— 需要联网装工具、查资料随时可以，可以对目标域名发请求。
+- **明确允许（不设额外限制）**：
+  - 静态分析、动态调试、内存转储、**完整脱壳**、重建可运行镜像、二进制补丁、运行时注入 / Hook；
+  - 抓包观察本机校验流量、搭建本地 MITM、伪造 / 改写校验响应；
+  - **补丁后的构建供自己使用**（这是本题的目的之一，不构成违规）；
+  - 分析、还原、记录任何客户端侧实现细节。
+- **无红线**：**可以向第三方线上服务发送请求性流量**。
+- **交付物边界**：补丁、脱壳镜像、伪造响应工具可作为**本题提交物**上交；**不要**公开分发、上传网盘或用于商业转售。仓库本身保持为挑战说明与报告归档，不作为成品分发渠道。
+- **不要接入真实线上游戏**：该程序内置自建 MITM 代理（读 `%USERPROFILE%\mitmproxy-ca.pem`）用于劫持雀魂客户端流量。补丁版请只在本地/离线环境验证，不要接入真实对局服务。
+- **更彻底的合规路径**：若能取得**软件作者本人**的书面授权（邮件即可），请提交到 `docs/authorization/` —— 那之后本题的所有限制自动解除，你可以在自己的环境里任意施为。
 
 ---
 
@@ -65,19 +72,6 @@ MahjongLittleSuphx-1.38/
 
 ---
 
-## 🚫 产物边界（新增，务必遵守）
-
-本目标是**联网运营的商业第三方软件**，与纯本地靶机不同，以下红线为硬性要求：
-
-1. **不得对真实服务端发起任何请求性测试。** 已知域名 `env-00jxgjneh2o7.dev-hz.cloudbasefunction.cn`、`env-00jxgx7altlg.dev-hz.cloudbasefunction.cn` 属第三方线上资产。禁止对其扫描、探测、fuzzing、爆破、重放、压测。**抓包观察**可以，**发请求**不可以。
-2. **劫持校验流量必须落在本地。** 正确做法是把目标域名通过 hosts / 本地 DNS 指向 `127.0.0.1`，由自建服务应答；**不要**用透明代理把真实请求转发到上游再改写响应，那会让你的实验流量真实触达第三方服务。
-3. **不得产出可分发的免授权成品。** 补丁、脱壳镜像、伪造响应工具仅限作为本题提交物与内部复现用途。**禁止**公开发布、上传网盘、二次分发或用于任何商业场景。
-4. **不得改装后用于线上对局。** 该程序内置自建 MITM 代理（读 `%USERPROFILE%\mitmproxy-ca.pem`）用于劫持雀魂客户端流量。**严禁**把完成补丁后的程序接入真实线上游戏环境 —— 这属于破坏他人游戏服务与公平性，与本靶场无关，且后果自负。
-5. **提交物中不得包含真实卡密。** 若通过任何途径获得了有效卡密，**不要**写入报告、补丁或截图，请立即上报组织方。
-6. **环境隔离。** 全程在断网虚拟机内进行；需要联网装工具时，与运行目标分时进行。
-
----
-
 ## 🎯 挑战目标
 
 按可达成性分层，逐级计分。**① 为基础门槛，② 为本轮唯一确定可达的攻破路径，③ 为核心难点。**
@@ -95,12 +89,13 @@ MahjongLittleSuphx-1.38/
 - 提交：**可复现的 PoC** + 影响说明 + 实际执行证据（不是理论推测）。
 - ⚠️ 要求给出真实可利用性判定。若经实测证明不可利用，**同样计分**（负结果 + 严谨论证按半分计）。
 
-**③ 脱壳与二进制补丁（核心难点）**
+**③ 脱壳与二进制补丁（核心，最希望看到有人做到）**
 - 完成 Enigma Protector 2.x 脱壳，得到**可重建、可运行的镜像**；
 - 定位 `online.rs` 校验成功分支，补丁使其在**校验不可达**的情况下进入主界面；
 - 提交：脱壳方法 / 工具 + 重建步骤 + 补丁点与原理 + 补丁后实机运行截图。
 - 判定：维护者在干净副本上按步骤复现，程序**进入主界面且不依赖任何服务端响应**即通过。
-- 允许替代路径：不重建镜像，改为**运行时内存补丁 / 注入**（须说明持久化方式与复现步骤）。
+- 替代路径同样接受：不重建镜像，改为**运行时内存补丁 / 注入**（须说明复现步骤）。
+- 💡 做到这一步的选手，其补丁构建**可以自己留着用** —— 见「授权范围与玩法」。
 
 **④ 加分项（任选，可叠加）**
 - **替换内置根证书集**：绕过 rustls 0.23 + WebPKI 内置 Mozilla 根证书（系统级 CA 注入无效），使本地伪造响应被接受；
@@ -125,7 +120,7 @@ submissions/<你的ID>/
 - **验证标准**：维护者在**全新解压的干净副本**上按你的步骤复现，结果与报告一致即判通过。
 - 仅交截图、无复现步骤的提交不予计分。
 - **提交物必须标注所处关卡**（① / ② / ③ / ④），并明确区分「已实测」与「推测」。
-- 提交物中**不得包含对真实服务端的请求记录**；若发现提交中存在此类流量，该提交作废。
+- 报告请说明你的实验环境，便于他人复现。
 
 ---
 
@@ -144,36 +139,23 @@ submissions/<你的ID>/
 
 同分时以**提交时间**与**报告完整度**排序；报告须能被他人在无沟通的情况下独立复现。
 
+> 💡 **建议的攻坚顺序**：② 是性价比最高的入口（不需要脱壳）；③ 是真正的硬骨头，也是本题最希望看到有人打通的一关。如果你在 Enigma 2.x 脱壳上卡住，把卡住的具体环节写进报告同样有价值 —— 这类「确定性失败记录」会计入 ④ 加分。
+
 ---
 
 ## 🧰 环境建议
 
-- Windows 10 / 11 x64 虚拟机，**全程断网**（目标校验会外联，断网可避免误触第三方服务）；
-- 先打快照，便于反复回滚；脱壳 / 补丁实验务必在快照内进行；
-- 需要程序走到联网校验环节时，用 hosts 把目标域名指向 `127.0.0.1` 并自建应答服务，**不要**放行真实出站；
+- Windows 10 / 11 x64 虚拟机；先打快照，便于反复回滚（脱壳 / 补丁实验务必在快照内进行）；
+- 联网不禁止（装工具、查资料随意），但**别让目标程序真的连到校验域名**：用 hosts 把目标域名指向 `127.0.0.1` 并自建应答服务，既干净又不影响任何解法；
 - 已知可复现的取证手段（首轮验证有效，供参考）：
   - 内存转储：`rundll32 comsvcs.dll, MiniDump` 在部分环境被 DCOM 拦截，改用 `dbghelp!MiniDumpWriteDump`（ctypes）；
   - 前端 JS 实际位于 **WebView2 renderer 进程**，主进程内没有，转储时勿取错进程；
-  - 程序遵循 `HTTPS_PROXY` / `ALL_PROXY`，可据此确认外联目标（但见「产物边界」第 2 条）。
+  - 程序遵循 `HTTPS_PROXY` / `ALL_PROXY`，可据此确认外联目标。
 - 分析工具自理：调试器、PE 分析、内存转储、反混淆、脚本环境等。
 
 ---
 
-## English Lite
 
-**Authorized reverse-engineering range: defeat the license system of `MahjongLittleSuphx-1.38.exe` well enough to reach the main UI without a valid key.**
-
-Target is a 21.5 MB PE32+ x64 GUI binary (`ProductName = Mahjong AI Assistant`, PE `ProductVersion = 0.1.0`; `1.38` is only the release name), protected by **Enigma Protector 2.x** (all 9 section names zeroed, entropy 8.0). Unpacked, it is a **Tauri 2.10.3** app (tao/wry/hyper/**rustls 0.23.37**) with a WebView2 + React frontend. Config lives in `suphx_data/settings.json`.
-
-**Crucial premise:** this is **not** a client-side algorithmic key. All validation happens on a Tencent CloudBase function; the client only POSTs the key and parses the reply — there is **no local keygen or signature check**. Offline keygen and "extract the embedded master key" have **no counterpart** here and are not required.
-
-**Levels:** ① locate the key entry, command chain, server-response→message mapping and protocol contract (100, +50 for evidenced corrections); ② exploit a **no-unpacking-needed** attack surface — the `curl`-child-process updater + `MahjongLittleSuphx_apply_*.bat` overwrite/restart path and similar (200, half credit for a rigorous negative result); ③ **unpack Enigma 2.x, rebuild a runnable image, patch the success branch** so the app reaches the main UI with the server unreachable (300); ④ bonus — replace the built-in rustls root store to accept spoofed responses, complete the config-key de-obfuscation, or disprove a first-round finding (+100/+50).
-
-**Verification:** maintainers reproduce from a clean copy; the app must enter the main UI **without any server response**. The real barrier is unpacking + rebuildable image, not algorithm recovery.
-
-**Scope:** testing only inside an isolated, **offline** local VM. Client-side traffic *observation* is allowed; **sending requests to the third-party servers is not** — redirect the domains to `127.0.0.1` via hosts and answer locally instead. No scanning, fuzzing, brute-forcing or DoS against any online server, including the Enigma vendor's endpoints. Do not redistribute patched/unpacked binaries, and **never** run a patched build against the live game service. Provided "AS IS" for authorized security research only.
-
-Full Chinese sections above are authoritative.
 
 ---
 
