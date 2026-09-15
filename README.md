@@ -10,8 +10,9 @@
 ## ⚠️ 授权范围
 
 - 本靶场面向**参加本轮授权测试的进攻方**开放，仅限在**隔离的本地虚拟机或专用测试机**内进行。
-- **允许**：静态分析、动态调试、内存转储、脱壳、打补丁、编写 Keygen、分析本地校验流量。
-- **禁止**：攻击 / 扫描 / 压测任何线上授权服务器；传播破解补丁、注册机或免授权成品；用于商业用途或二次分发；在公开渠道发布完整解法（writeup 请提交至 `writeups/` 由维护者审核后放出）。
+- **允许**：静态分析、动态调试、内存转储、脱壳、打补丁、编写 Keygen；抓包分析本机校验流量、使用本地代理拦截 / 改写报文、伪造本地校验响应。**客户端侧的流量分析与伪造，属于本题的正常解法范围。**
+- **禁止**：向任何线上服务器发送攻击流量 —— 包括但不限于扫描、探测、目录爆破、凭据爆破、参数 fuzzing、压测 / DoS，以及对 Enigma Protector 厂商或程序作者的任何线上接口发起测试。**授权范围只覆盖本机运行的目标程序，不覆盖它连接的任何服务端。** 若校验逻辑需要服务端响应才能走通，请用本地伪造解决，不要转向线上。
+- **禁止**：传播破解补丁、注册机或免授权成品；用于商业用途或二次分发；在公开渠道发布完整解法（writeup 请提交至 `writeups/` 由维护者审核后放出）。
 - 分析目标仅限本仓库提供的 `MahjongLittleSuphx-1.38.exe`，**不得**将技术手段迁移至未获授权的其他软件。
 - 本项目 "AS IS" 提供，仅供安全研究与教学内容使用。
 
@@ -109,7 +110,7 @@ Target is a 21.5 MB PE32+ x64 GUI binary, `ProductName = Mahjong AI Assistant`, 
 
 **The accepted card-key is the flag.** Submit via PR: `report.md` + reproducible PoC + proof screenshots and a `settings.json` diff. Maintainers verify on a clean copy.
 
-**Scope:** testing only inside an isolated local VM. Attacking any online license server, redistributing cracks/keygens, or publishing full solutions publicly is prohibited. Provided "AS IS" for authorized security research only.
+**Scope:** testing only inside an isolated local VM. **Client-side traffic analysis is allowed** — packet capture, local proxy interception/rewriting, and spoofing local validation responses are all in-scope solutions. **Attacking any online server is prohibited** (scanning, probing, fuzzing, brute-forcing, DoS — including the Enigma Protector vendor's or the author's endpoints); the authorization covers the local binary only, never the services it contacts. Redistributing cracks/keygens or publishing full solutions publicly is also prohibited. Provided "AS IS" for authorized security research only.
 
 ---
 
